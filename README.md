@@ -1,1 +1,1 @@
-# cat_charity_fund
+Заполни меня!
