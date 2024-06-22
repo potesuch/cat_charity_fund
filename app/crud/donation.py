@@ -16,6 +16,9 @@ class CRUDDonation(CRUDBase[
     DonationCreate,
     BaseModel
 ]):
+    """
+    Класс для операций CRUD с моделью Donation.
+    """
 
     async def create(
             self,
@@ -23,6 +26,17 @@ class CRUDDonation(CRUDBase[
             session: AsyncSession,
             user: Optional[User] = None
     ) -> Donation:
+        """
+        Создает новое пожертвование и запускает инвестиционный процесс.
+
+        Args:
+            obj_in (DonationCreate): Данные для создания пожертвования.
+            session (AsyncSession): Асинхронная сессия SQLAlchemy.
+            user (Optional[User]): Пользователь, создающий пожертвование (если применимо).
+
+        Returns:
+            Donation: Созданное пожертвование.
+        """
         donation = await super().create(obj_in, session, user)
         await investment(session)
         await session.refresh(donation)
@@ -33,6 +47,16 @@ class CRUDDonation(CRUDBase[
         session: AsyncSession,
         user: User
     ) -> Sequence[Donation]:
+        """
+        Получает все пожертвования, сделанные пользователем.
+
+        Args:
+            session (AsyncSession): Асинхронная сессия SQLAlchemy.
+            user (User): Пользователь, чьи пожертвования нужно получить.
+
+        Returns:
+            Sequence[Donation]: Список пожертвований.
+        """
         donations = await session.scalars(
             select(Donation).where(Donation.user_id == user.id)
         )

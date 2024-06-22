@@ -8,6 +8,18 @@ from app.core.db import Base
 
 
 class CharityProject(Base):
+    """
+    Модель для благотворительных проектов.
+    
+    Attributes:
+        name (Mapped[str]): Имя проекта.
+        description (Mapped[str]): Описание проекта.
+        full_amount (Mapped[int]): Сумма, необходимая для полного финансирования проекта.
+        invested_amount (Mapped[int]): Сумма, уже вложенная в проект.
+        fully_invested (Mapped[bool]): Флаг, указывающий, полностью ли профинансирован проект.
+        create_date (Mapped[dt.datetime]): Дата создания проекта.
+        close_date (Mapped[dt.datetime]): Дата закрытия проекта (если применимо).
+    """
     name: Mapped[str] = mapped_column(String(100), unique=True)
     description: Mapped[str] = mapped_column(Text)
     full_amount: Mapped[int] = mapped_column(Integer)
@@ -27,6 +39,16 @@ class CharityProject(Base):
 
     @validates('fully_invested')
     def validate_fully_invested(self, key, value):
+        """
+        Устанавливает дату закрытия проекта при его полном финансировании.
+
+        Args:
+            key (str): Имя проверяемого поля.
+            value (bool): Значение проверяемого поля.
+
+        Returns:
+            bool: Проверенное значение.
+        """
         if value:
             self.close_date = dt.datetime.now()
         return value

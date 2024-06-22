@@ -15,6 +15,9 @@ class CRUDCharityProject(CRUDBase[
     CharityProjectCreate,
     CharityProjectUpdate
 ]):
+    """
+    Класс для операций CRUD с моделью CharityProject.
+    """
 
     async def create(
         self,
@@ -22,6 +25,17 @@ class CRUDCharityProject(CRUDBase[
         session: AsyncSession,
         user: Optional[User] = None
     ) -> CharityProject:
+        """
+        Создает новый благотворительный проект и запускает инвестиционный процесс.
+
+        Args:
+            obj_in (CharityProjectCreate): Данные для создания проекта.
+            session (AsyncSession): Асинхронная сессия SQLAlchemy.
+            user (Optional[User]): Пользователь, создающий проект (если применимо).
+
+        Returns:
+            CharityProject: Созданный проект.
+        """
         project = await super().create(obj_in, session)
         await investment(session)
         await session.refresh(project)
@@ -32,6 +46,16 @@ class CRUDCharityProject(CRUDBase[
         name: str,
         session: AsyncSession
     ) -> Optional[int]:
+        """
+        Получает ID проекта по его имени.
+
+        Args:
+            name (str): Имя проекта.
+            session (AsyncSession): Асинхронная сессия SQLAlchemy.
+
+        Returns:
+            Optional[int]: ID проекта или None, если проект не найден.
+        """
         project_id = await session.scalar(
             select(CharityProject.id).where(CharityProject.name == name)
         )

@@ -6,10 +6,19 @@ from app.core.config import settings
 
 
 class Base(DeclarativeBase):
+    """
+    Базовый класс для моделей SQLAlchemy.
+
+    Attributes:
+        id (Mapped[int]): Первичный ключ.
+    """
     id: Mapped[int] = mapped_column(primary_key=True)
 
     @declared_attr.directive
     def __tablename__(cls):
+        """
+        Метод, возвращающий название таблицы, основанное на имени класса.
+        """
         return cls.__name__.lower()
 
 
@@ -19,5 +28,11 @@ async_session = async_sessionmaker(engine)
 
 
 async def get_async_session():
+    """
+    Асинхронный генератор, предоставляющий сессию для работы с базой данных.
+
+    Yields:
+        AsyncSession: Асинхронная сессия SQLAlchemy.
+    """
     async with async_session() as session:
         yield session
